@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState } from 'react';
 
 import classes from "./PostsList.module.css";
 import Post from "./Post";
@@ -7,23 +7,27 @@ import Modal from "./Modal";
 
 function PostsList( {isPosting, onStopPosting} ) {
 
-    // APPROACH VISIBLE CONTENT USING VARIABLE
-    // let modalContent;
-    // if (modalIsVisible) {
-    //     modalContent = <Modal onClose={hideModallHandler}>
-    //         <NewPost onBodyChange={bodyChangeHandler} onAuthorChange={authorChangeHandler} />
-    //     </Modal>
-    // }
+    const [posts, setPosts] = useState([]);
+
+    function addPostHandler(postData) {
+        setPosts((existingPosts) => [postData, ...existingPosts]);
+    }
 
     return (
     <>
         {isPosting && (<Modal onClose={onStopPosting}>
             <NewPost 
-                onCancel={onStopPosting} />
+                onCancel={onStopPosting} onAddPost={addPostHandler} />
          </Modal>)}
-        <ul className={classes.posts}>
-            <Post author="RISMA" body="Check out the full course" />
-        </ul>
+        {posts.length > 0 && <ul className={classes.posts}>
+            {posts.map((post) => <Post key={post.body} author={post.author} body={post.body} />)}
+        </ul>}
+        {posts.length === 0 && (
+            <div style={{textAlign: 'center', color:'white'}}>
+                <h2>There are no posts yet.</h2>
+                <p>Start adding some!</p>
+            </div>
+        )}
     </>
     );
 }
